@@ -6,11 +6,15 @@ uint8_t peerMac[] = {0x90, 0x70, 0x69, 0xE0, 0x2A, 0x48};
 // Light board MAC: 90:70:69:E0:2A:48
 const uint8_t on[] = {4};
 const uint8_t off[] = {5};
+const uint8_t hold[] = {6};
 bool sendStat = false;
 
 void setup() {
     Serial.begin(115200);
     pinMode(13, INPUT);
+    pinMode(4, INPUT);
+    pinMode(5, INPUT);
+    
     delay(100);
 
     WiFi.mode(WIFI_STA);
@@ -23,6 +27,9 @@ void setup() {
 }
 
 void loop() {
+    int y = analogRead(4);
+    int x = analogRead(5);
+    Serial.printf("x: %d\t\ty: %d\n", x, y);
 
     int pinStat = digitalRead(13);
 
@@ -36,6 +43,8 @@ void loop() {
            esp_now_send(peerMac, off, 1);
         }
         sendStat = !sendStat;
+    } else {
+        esp_now_send(peerMac, hold, 1);
     }
     delay(250);
     //const char *msg = ":3";
